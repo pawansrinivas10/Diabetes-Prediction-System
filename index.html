@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Diabetes Predictor</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    
+    #predictForm {
+      background-color: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 12px;
+      margin-top: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 18px;
+      background-color: #e8f4fc;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <h2>Diabetes Prediction Form</h2>
+  <form id="predictForm">
+    <label>Pregnancies: <input type="number" name="Pregnancies" /></label><br/>
+    <label>Glucose: <input type="number" name="Glucose" /></label><br/>
+    <label>Blood Pressure: <input type="number" name="BloodPressure" /></label><br/>
+    <label>Skin Thickness: <input type="number" name="SkinThickness" /></label><br/>
+    <label>Insulin: <input type="number" name="Insulin" /></label><br/>
+    <label>BMI: <input type="number" step="any" name="BMI" /></label><br/>
+    <label>Diabetes Pedigree Function: <input type="number" step="any" name="DiabetesPedigreeFunction" /></label><br/>
+    <label>Age: <input type="number" name="Age" /></label><br/>
+    <button type="submit">Predict</button>
+  </form>
+
+  <h3 id="result"></h3>
+
+  <script>
+    document.getElementById("predictForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const jsonData = {};
+      formData.forEach((value, key) => {
+        jsonData[key] = Number(value);
+      });
+
+      fetch("http://localhost:5000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").innerText = data.prediction || data.error;
+      })
+      .catch(err => {
+        document.getElementById("result").innerText = "Error: " + err;
+      });
+    });
+  </script>
+</body>
+</html>
