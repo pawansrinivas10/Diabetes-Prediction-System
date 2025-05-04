@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pickle
 import numpy as np
+import os
 
 app = Flask(__name__)
-CORS(app)  # ✅ Allow all origins
+CORS(app)
 
 # Load model
 with open("diabetes_model.pkl", "rb") as f:
@@ -19,16 +20,14 @@ def home():
 def predict():
     try:
         data = request.get_json()
-        features = np.array([[
-            data["Pregnancies"],
-            data["Glucose"],
-            data["BloodPressure"],
-            data["SkinThickness"],
-            data["Insulin"],
-            data["BMI"],
-            data["DiabetesPedigreeFunction"],
-            data["Age"]
-        ]])
+        features = np.array([[data["Pregnancies"],
+                              data["Glucose"],
+                              data["BloodPressure"],
+                              data["SkinThickness"],
+                              data["Insulin"],
+                              data["BMI"],
+                              data["DiabetesPedigreeFunction"],
+                              data["Age"]]])
         prediction = model.predict(features)
         result = "Diabetic" if prediction[0] == 1 else "Not Diabetic"
         return jsonify({"prediction": result})
@@ -36,5 +35,6 @@ def predict():
         return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
-    print("🚀 Server running at http://127.0.0.1:5000")
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"🚀 Server running on port {port}")
+    app.run(host='0.0.0.0', port=port)
