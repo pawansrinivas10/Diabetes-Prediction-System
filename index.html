@@ -1,117 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Diabetes Predictor</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    
-    h2 {
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 30px;
-      border-bottom: 2px solid #3498db;
-      padding-bottom: 10px;
-    }
-    
-    #predictForm {
-      background-color: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 15px;
-      font-weight: 500;
-    }
-    
-    input[type="number"] {
-      width: 100%;
-      padding: 8px 12px;
-      margin-top: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-    
-    button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-      transition: background-color 0.3s;
-    }
-    
-    button:hover {
-      background-color: #2980b9;
-    }
-    
-    #result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 18px;
-      background-color: #e8f4fc;
-      color: #2c3e50;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diabetes Risk Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>Diabetes Prediction Form</h2>
-  <form id="predictForm">
-    <label>Pregnancies: <input type="number" name="Pregnancies" /></label><br/>
-    <label>Glucose: <input type="number" name="Glucose" /></label><br/>
-    <label>Blood Pressure: <input type="number" name="BloodPressure" /></label><br/>
-    <label>Skin Thickness: <input type="number" name="SkinThickness" /></label><br/>
-    <label>Insulin: <input type="number" name="Insulin" /></label><br/>
-    <label>BMI: <input type="number" step="any" name="BMI" /></label><br/>
-    <label>Diabetes Pedigree Function: <input type="number" step="any" name="DiabetesPedigreeFunction" /></label><br/>
-    <label>Age: <input type="number" name="Age" /></label><br/>
-    <button type="submit">Predict</button>
-  </form>
+  <div class="container">
+    <header>
+      <h1>Diabetes Risk Assessment</h1>
+      <div class="subtitle">Check your risk level in just a few steps</div>
+    </header>
 
-  <h3 id="result"></h3>
+    <form id="predictForm">
+      <div class="form-group">
+        <label for="Glucose">Glucose Level (mg/dL)</label>
+        <input type="number" id="Glucose" name="Glucose" required min="50" max="300" />
+        <span class="info-text">Normal range: 70-120 mg/dL (fasting)</span>
+      </div>
 
-  <script>
-    document.getElementById("predictForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+      <div class="form-group">
+        <label for="BloodPressure">Blood Pressure (mmHg)</label>
+        <input type="number" id="BloodPressure" name="BloodPressure" required min="50" max="200" />
+        <span class="info-text">Normal range: 90 to 120 mmHg</span>
+      </div>
 
-      const formData = new FormData(e.target);
-      const jsonData = {};
-      formData.forEach((value, key) => {
-        jsonData[key] = Number(value);
-      });
+      <div class="form-group">
+        <label for="Insulin">Insulin Level (pmol/L)</label>
+        <input type="number" id="Insulin" name="Insulin" required min="0" max="200" />
+        <span class="info-text">Normal fasting range: 75-150 pmol/L</span>
+      </div>
 
-      fetch("http://localhost:5000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(jsonData)
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("result").innerText = data.prediction || data.error;
-      })
-      .catch(err => {
-        document.getElementById("result").innerText = "Error: " + err;
-      });
-    });
-  </script>
+      <div class="form-group">
+        <label for="BMI">Body Mass Index (BMI)</label>
+        <input type="number" step="any" id="BMI" name="BMI" required min="10" max="50" />
+        <span class="info-text">Normal range: 18.5-25</span>
+      </div>
+
+      <div class="form-group">
+        <label for="Age">Age (years)</label>
+        <input type="number" id="Age" name="Age" required min="1" max="120" />
+      </div>
+
+      <button type="submit">Check My Risk</button>
+    </form>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="resultCard" class="result-card hidden">
+      <h3>Prediction</h3>
+      <p id="resultText">Loading...</p>
+    </div>
+
+    <div id="debug" class="debug-box hidden"></div>
+  </div>
+
+  <footer>
+    Note: This assessment is not a substitute for professional medical advice.
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
